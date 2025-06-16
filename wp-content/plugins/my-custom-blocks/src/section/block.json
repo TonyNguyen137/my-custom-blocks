@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "custom-block/section",
+	"version": "0.1.0",
+	"title": "Section",
+	"category": "custom-blocks",
+	"icon": "smiley",
+	"description": "A <section> or <div> HTML element used to wrap related content.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"anchor": true
+	},
+	"textdomain": "my-custom-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScript": "file:./view.js"
+}

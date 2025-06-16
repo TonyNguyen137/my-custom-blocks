@@ -1,0 +1,137 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "custom-block/multi-columns",
+	"version": "0.1.0",
+	"title": "Multi Columns",
+	"category": "custom-blocks",
+	"icon": "columns",
+	"description": "...",
+	"example": {
+		"innerBlocks": [
+			{
+				"name": "core/heading",
+				"attributes": {
+					"level": 3,
+					"content": "Heading"
+				}
+			},
+			{
+				"name": "core/paragraph",
+				"attributes": {
+					"content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin finibus, lectus non interdum cursus, arcu sapien mollis lacus, et tincidunt odio nisi ut purus. Duis eleifend, magna placerat faucibus tincidunt, orci nulla ornare tortor, eget egestas tortor nunc quis sem. Cras in tortor justo. Nulla consectetur leo vel blandit consectetur.Fusce quis sapien ante. Vestibulum non varius augue, et ultricies urna. Integer hendrerit suscipit nibh."
+				}
+			},
+			{
+				"name": "core/heading",
+				"attributes": {
+					"level": 4,
+					"content": "Sub-heading"
+				}
+			},
+			{
+				"name": "core/paragraph",
+				"attributes": {
+					"content": "Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras vestibulum mauris diam. Praesent semper diam a efficitur iaculis. Nullam lacinia augue quis lorem accumsan tempus."
+				}
+			}
+		],
+		"attributes": {
+			"columnCount": 2,
+			"columnWidth": 80
+		},
+		"viewportWidth": 720
+	},
+	"parent": ["core/post-content"],
+	"supports": {
+		"html": true,
+		"color": {
+			"__experimentalDefaultControls": {
+				"color": false
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"__experimentalDefaultControls": {
+				"margin": false,
+				"padding": false
+			}
+		},
+		"anchor": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"textAlign": true,
+			"__experimentalDefaultControls": {
+				"fontSize": false
+			}
+		},
+		"layout": true,
+		"align": ["wide", "full"]
+	},
+	"attributes": {
+		"dropCapSize": {
+			"type": "object",
+			"default": {
+				"size": "small",
+				"fontSize": "3.8rem",
+				"lineHeight": "3.5rem"
+			}
+		},
+		"dropCapColor": {
+			"type": "string",
+			"default": "#b8b8b8"
+		},
+		"columnCount": {
+			"type": "integer",
+			"default": 4
+		},
+		"columnWidth": {
+			"type": "integer",
+			"default": 200
+		},
+		"columnGap": {
+			"type": "integer",
+			"default": 40
+		},
+		"columnRuleStyle": {
+			"type": "string",
+			"default": "solid"
+		},
+		"columnRuleWidth": {
+			"type": "integer",
+			"default": 1
+		},
+		"columnRuleColor": {
+			"type": "string",
+			"default": "#b8b8b8"
+		},
+		"style": {
+			"type": "object",
+			"default": {
+				"color": {
+					"text": "var(--clr-black)",
+					"background": "#fbf9f4"
+				}
+			}
+		}
+	},
+	"styles": [
+		{
+			"name": "default",
+			"label": "Default",
+			"isDefault": true
+		},
+		{
+			"name": "drop-cap",
+			"label": "Drop-Cap"
+		}
+	],
+
+	"textdomain": "my-custom-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

@@ -1,0 +1,65 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output (from tools like webpack or @wordpress/scripts)
+
+wp-content/themes/twentytwentythree/
+wp-content/themes/twentytwentyfour
+wp-content/themes/twentytwentyfive/
+
+
+wp-content/themes/*/public/
+wp-content/themes/*/dist/
+wp-content/themes/*/build/
+wp-content/plugins/my-custom-blocks/build/
+
+
+
+
+# WordPress core files (if using full WP project — adapt as needed)
+# wp-admin/
+# wp-includes/
+license.txt
+readme.html
+
+# Ignore uploads (optional: comment this if you're versioning media)
+wp-content/uploads/
+
+# Ignore local config
+# wp-config.php
+# wp-config-local.php
+.env
+.env.local
+
+# VSCode
+.vscode/
+
+# Composer
+/vendor/
+composer.lock
+
+# SASS cache
+.sass-cache/
+
+# Log files
+*.log
+
+# JetBrains IDEs
+.idea/
+
+# Custom: theme or plugin specific
+# (e.g., ignore generated files from @wordpress/create-block)
+*.zip
+*.map
+*.tar.gz
+*.tmp
