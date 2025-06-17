@@ -1,0 +1,15 @@
+@use '../abstracts' as *;
+
+button.btn {
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+a.btn {
+  text-decoration: none;
+  color: inherit;
+}
+
+.btn {
+}

@@ -72,6 +72,8 @@ export default function Edit({ attributes, setAttributes }) {
 		});
 	}
 
+	console.log("test");
+
 	return (
 		<>
 			<InspectorControls>

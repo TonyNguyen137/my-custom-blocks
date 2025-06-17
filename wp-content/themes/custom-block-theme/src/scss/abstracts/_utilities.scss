@@ -1,0 +1,2345 @@
+/* 
+This file contains SCSS code sourced from the Bootstrap framework.
+Source: https://github.com/twbs/bootstrap/blob/main/scss/_utilities.scss
+The code used in accordance with Bootstrap's open-source license (MIT).
+Modifications may have been made to the original code.
+*/
+
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
+@use 'functions' as *;
+@use 'variables' as *;
+
+$negative-spacers: if(
+  $enable-negative-margins,
+  negativify-map($sizes-regular),
+  ()
+);
+$negative-spacers-irregular: if(
+  $enable-negative-margins,
+  negativify-map($sizes-irregular),
+  ()
+);
+$selected-theme-rgb-colors: if(
+  $enable-rgb-colors,
+  map-loop($selected-theme-hex-colors, to-rgb, '$value'),
+  if(
+    meta.variable-exists(selected-theme-rgb),
+    if(
+      list.length(map.keys($selected-theme-rgb)) > 0,
+      map-loop($selected-theme-rgb, to-rgb, '$value'),
+      null
+    ),
+    null
+  )
+);
+
+// @debug selected-theme $selected-theme-rgb-colors;
+
+$simple-custom-properties-merged: map.merge(
+  if(
+    meta.variable-exists(simple-custom-properties),
+    $simple-custom-properties,
+    ()
+  ),
+  if(
+    meta.variable-exists(responsive-custom-properties),
+    map.get($responsive-custom-properties, xs),
+    ()
+  )
+);
+//
+$utilities: ();
+$utilities: map.merge(
+  (
+    'revert-spacing': (
+      function: 'nested-rules',
+      class: revert-spacing,
+      property: (
+        '*': (
+          padding: revert,
+          margin: revert,
+        ),
+      ),
+    ),
+    'container-type': (
+      class: container-type,
+      property: container-type,
+      values: inline-size size normal revert,
+    ),
+    'marker': (
+      function: 'nested-rules',
+      class: marker,
+      property: (
+        '& li::marker': (
+          color: var(--marker-color),
+          font-size: var(--marker-font-size),
+        ),
+      ),
+    ),
+    'custom-container': (
+      function: 'property-advanced',
+      class: container-dynamic,
+      property: (
+        padding-inline: $container-padding,
+        margin-inline: auto,
+        width: 100%,
+        max-width: var(--container-dynamic-max-width),
+      ),
+    ),
+    'text-shorten': (
+      function: 'property-advanced',
+      class: shorten,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height:
+          calc(
+            1em * var(--shorten-line-height, 1.5) * var(--shorten-max-line, 4)
+          ),
+      ),
+    ),
+    'text-shorten-1': (
+      function: 'property-advanced',
+      class: shorten-1,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height: calc(1em * var(--shorten-line-height, 1.5) * 1),
+      ),
+    ),
+    'text-shorten-2': (
+      function: 'property-advanced',
+      class: shorten-2,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height: calc(1em * var(--shorten-line-height, 1.5) * 2),
+      ),
+    ),
+    'text-shorten-3': (
+      function: 'property-advanced',
+      class: shorten-3,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height: calc(1em * var(--shorten-line-height, 1.5) * 3),
+      ),
+    ),
+    'text-shorten-4': (
+      function: 'property-advanced',
+      class: shorten-4,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height: calc(1em * var(--shorten-line-height, 1.5) * 4),
+      ),
+    ),
+    'text-shorten-5': (
+      function: 'property-advanced',
+      class: shorten-5,
+      property: (
+        overflow: hidden,
+        line-height: var(--shorten-line-height, 1.5),
+        max-height: calc(1em * var(--shorten-line-height, 1.5) * 5),
+      ),
+    ),
+    'marker-image': (
+      function: 'nested-rules',
+      class: marker-image,
+      property: (
+        '& li::marker': (
+          list-style-image: var(--marker-image-src),
+        ),
+      ),
+    ),
+    'hyphen': (
+      class: hyphens,
+      property: hyphens,
+      values: auto none manual,
+    ),
+    'linear-gradient': (
+      class: linear-gradient,
+      property: background,
+      values: (
+        null:
+          linear-gradient(
+            var(--gradient-direction, to top),
+            var(--gradient-first-color) var(--gradient-first-stop),
+            var(--gradient-second-color) var(--gradient-second-stop)
+          ),
+      ),
+    ),
+    'backdrop-blur': (
+      class: backdrop-blur,
+      property: backdrop-filter,
+      values: (
+        null: blur(var(--backdrop-blur)),
+        1: blur(1px),
+        2: blur(2px),
+        3: blur(3px),
+        4: blur(4px),
+        5: blur(5px),
+        6: blur(6px),
+        7: blur(7px),
+        8: blur(8px),
+        9: blur(9px),
+        10: blur(10px),
+      ),
+    ),
+    'scrollbar-webkit-custom': (
+      state: '::-webkit-scrollbar',
+      class: custom-scrollbar,
+      required-property: (
+        '-webkit-appearance': none,
+      ),
+      property: width height,
+      values: (
+        null: 14px,
+      ),
+    ),
+    'scrollthumb-webkit-custom': (
+      function: 'property-advanced',
+      state: '::-webkit-scrollbar-thumb',
+      class: custom-scrollthumb,
+      property: (
+        border-radius: 8px,
+        border: 3px solid #fff,
+        background-color: rgba(0, 0, 0, 0.3),
+      ),
+    ),
+    'scrollbar-hide-on-touch-device': (
+      media: '(hover: none) and (pointer: coarse)',
+      class: scrollbar-touch,
+      property: scrollbar-width,
+      values: none,
+    ),
+    'scrollbar': (
+      class: scrollbar,
+      property: scrollbar-width,
+      values: auto thin none,
+    ),
+    'aspect-ratio': (
+      class: aspect-ratio,
+      property: aspect-ratio,
+      values: (
+        none: var(--aspect-ratio),
+        square: string.unquote('1 / 1'),
+        video: string.unquote('16 / 9'),
+        classic: string.unquote('4 / 3'),
+        photo: string.unquote('3 / 2'),
+        portrait: string.unquote('2 / 3'),
+        ultrawide: string.unquote('21 / 9'),
+      ),
+    ),
+    'flows': (
+      function: 'nested-rules',
+      class: flows,
+      property: (
+        '*:where(:not(:first-child))': (
+          margin-top: var(--flow-space, 1em),
+        ),
+      ),
+    ),
+    'flow-easy': (
+      function: 'nested-rules',
+      class: flow-simple,
+      property: (
+        '> *:where(:not(:first-child))': (
+          margin-top: var(--flow-space, 1em),
+        ),
+      ),
+    ),
+    'flow': (
+      function: 'nested-rules',
+      class: flow,
+      property: (
+        '> :first-child': (
+          margin: 0,
+        ),
+        '> * + *': (
+          margin-top: var(--flow-space, 16px),
+        ),
+      ),
+    ),
+    'flow-deep': (
+      function: 'nested-rules',
+      class: flow-deep,
+      property: (
+        '> :first-child': (
+          margin: 0,
+        ),
+        '> * + *': (
+          margin-top: var(--flow-space, 16px),
+          margin-bottom: 0,
+        ),
+        '> :last-child': (
+          margin-bottom: var(--flow-space-last, 0px),
+        ),
+      ),
+    ),
+    'flows-ring-a': (
+      function: 'nested-rules',
+      class: flows-rings-deep-a,
+      property: (
+        'a:focus': (
+          outline: 0,
+          box-shadow: var(--box-shadow-focus),
+        ),
+      ),
+    ),
+    'border-custom-properties': (
+      function: 'custom-property-value',
+      property: border,
+      class: border,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-top': (
+      function: 'custom-property-value',
+      property: border-top,
+      class: border-top,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-bottom': (
+      function: 'custom-property-value',
+      property: border-bottom,
+      class: border-bottom,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-start': (
+      function: 'custom-property-value',
+      property: border-left,
+      class: border-start,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-end': (
+      function: 'custom-property-value',
+      property: border-right,
+      class: border-end,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-y': (
+      function: 'custom-property-value',
+      property: border-block,
+      class: border-y,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'border-cp-x': (
+      function: 'custom-property-value',
+      property: border-inline,
+      class: border-x,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(borders),
+          map.get($borders, custom-property-prefix),
+          null
+        ),
+      values: if(meta.variable-exists(borders), map.get($borders, values), null),
+    ),
+    'fade': (
+      function: 'nested-rules',
+      class: fade,
+      property: (
+        transition: opacity 0.15s linear,
+        '&:not(.show)': (
+          opacity: 0,
+        ),
+        '&.show': (
+          opacity: 0.5,
+        ),
+      ),
+    ),
+    'collapse': (
+      function: 'nested-rules',
+      class: collapse,
+      property: (
+        '&:not(.show)': (
+          display: none,
+        ),
+      ),
+    ),
+    'collapsing': (
+      function: 'property-advanced',
+      class: collapsing,
+      property: (
+        height: 0,
+        overflow: hidden,
+        transition: height 0.35s ease,
+      ),
+    ),
+    'collapsing-horizontal': (
+      function: 'property-advanced',
+      class: collapsing-horizontal,
+      property: (
+        width: 0,
+        height: auto,
+        transition: width 0.35 ease,
+      ),
+    ),
+    'flow-ring': (
+      function: 'nested-rules',
+      class: flow-ring,
+      property: (
+        '*:focus': (
+          outline: 0,
+          box-shadow: 0 0 0 var(--focus-ring-width, 4px)
+            var(--focus-ring-color, var(--#{$prefix}clr-primary)),
+        ),
+      ),
+    ),
+    'flow-ring-a': (
+      function: 'nested-rules',
+      class: flow-ring-a,
+      property: (
+        'a:focus': (
+          outline: 0,
+          box-shadow: 0 0 0 var(--focus-ring-width, 4px)
+            var(--focus-ring-color, var(--#{$prefix}clr-primary)),
+        ),
+      ),
+    ),
+    'box-sizing': (
+      property: box-sizing,
+      class: box,
+      values: border-box content-box,
+    ),
+    'inset': (
+      property: inset,
+      class: inset,
+      values: 0,
+    ),
+    'isolation': (
+      property: isolation,
+      class: isolate,
+      values: (
+        null: isolate,
+      ),
+    ),
+    'cursor': (
+      property: cursor,
+      class: cursor,
+      values: pointer help wait crosshair not-allowed zoom-in grab,
+    ),
+
+    'overlay-custom': (
+      function: 'nested-rules',
+      class: overlay,
+      property: (
+        position: relative,
+        '&::after': (
+          content: "''",
+          position: absolute,
+          inset: 0,
+          background-color: var(--overlay-background, var(--clr-black)),
+          opacity: var(--alpha, 0.5),
+          z-index: var(--overlay-zindex, -1),
+        ),
+      ),
+    ),
+    'overlay-dark': (
+      property: border-image,
+      class: overlay-dark,
+      values: (
+        1: fill 0 linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+        2: fill 0 linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        3: fill 0 linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        4: fill 0 linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)),
+        5: fill 0 linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        6: fill 0 linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        7: fill 0 linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        8: fill 0 linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+        9: fill 0 linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+      ),
+    ),
+    'resize': (
+      property: resize,
+      class: resize,
+      values: none horizontal vertical both,
+    ),
+    'align': (
+      property: vertical-align,
+      class: align,
+      values: baseline top middle bottom text-bottom text-top,
+    ),
+    'float': (
+      responsive: true,
+      property: float,
+      values: (
+        start: left,
+        end: right,
+        none: none,
+      ),
+    ),
+    'object-fit': (
+      responsive: true,
+      property: object-fit,
+      class: object,
+      values: (
+        contain: contain,
+        cover: cover,
+        fill: fill,
+        scale: scale-down,
+        none: none,
+      ),
+    ),
+    'object-position': (
+      responsive: true,
+      property: object-position,
+      class: object,
+      values: top bottom left right center,
+    ),
+    'display': (
+      responsive: true,
+      property: display,
+      class: d,
+      values: inline inline-block block grid inline-grid table table-row
+        table-cell flex inline-flex none,
+    ),
+    'grid-template-rows': (
+      property: grid-template-rows,
+      class: grid-template-rows,
+      values: subgrid,
+    ),
+    'grid-template-columns': (
+      property: grid-template-columns,
+      class: grid-template-columns,
+      values: subgrid,
+    ),
+    'grid-span': (
+      property: grid-row,
+      class: span,
+      values: (
+        1: span 1,
+        2: span 2,
+        3: span 3,
+        4: span 4,
+        5: span 5,
+      ),
+    ),
+    'translate-fixed': (
+      property: transform,
+      class: translate-f,
+      values: map-loop($fixed-values, value-to-css-translate, '$value'),
+    ),
+    'translate-x-fixed': (
+      property: transform,
+      class: translate-y-f,
+      values: map-loop($fixed-values, value-to-css-translate, '$value', x),
+    ),
+    'translate-y-fixed': (
+      property: transform,
+      class: translate-x-f,
+      values: map-loop($fixed-values, value-to-css-translate, '$value', y),
+    ),
+    'translate-quarter': (
+      property: transform,
+      class: translate-quarter,
+      values: (
+        n: translate(-25%, -25%),
+        null: translate(25%, 25%),
+        nx: translateX(-25%),
+        ny: translateY(-25%),
+        x: translateX(25%),
+        y: translateY(25%),
+      ),
+    ),
+    'translate-middle': (
+      property: transform,
+      class: translate-middle,
+      values: (
+        null: translate(50%, 50%),
+        n: translate(-50%, -50%),
+        nx: translateX(-50%),
+        ny: translateY(-50%),
+        x: translateX(50%),
+        y: translateY(50%),
+      ),
+    ),
+    'translate-three-quarters': (
+      property: transform,
+      class: translate-three-quarters,
+      values: (
+        null: translate(75%, 75%),
+        n: translate(-75%, -75%),
+        nx: translateX(-75%),
+        ny: translateY(-75%),
+        x: translateX(75%),
+        y: translateY(75%),
+      ),
+    ),
+    'translate-full': (
+      property: transform,
+      class: translate-full,
+      values: (
+        null: translate(100%, 100%),
+        n: translate(-100%, -100%),
+        nx: translateX(-100%),
+        ny: translateY(-100%),
+        x: translateX(100%),
+        y: translateY(100%),
+      ),
+    ),
+    'translate-x': (
+      property: transform,
+      class: translate-x,
+      values: (
+        null: translateX(var(--translate-x)),
+      ),
+    ),
+    'translate-y': (
+      property: transform,
+      class: translate-full,
+      values: (
+        null: translateY(var(--translate-y)),
+      ),
+    ),
+    'border': (
+      class: border,
+      property: border,
+      values: (
+        null: 1px solid var(--border-clr, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'border-top': (
+      class: border-top,
+      property: border-top,
+      values: (
+        null: 1px solid var(--border-clr, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'border-bottom': (
+      class: border-bottom,
+      property: border-bottom,
+      values: (
+        null: 1px solid var(--border-clr, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'border-left': (
+      class: border-start,
+      property: border-left,
+      values: (
+        null: 1px solid var(--border-clr, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'border-right': (
+      class: border-end,
+      property: border-right,
+      values: (
+        null: 1px solid var(--border-clr, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'border-rgba': (
+      class: border-rgba,
+      property: border,
+      values: (
+        null: 1px solid
+          var(--border-clr-rgb, rgba(var(--#{$prefix}clr-primary-rgb), 1)),
+      ),
+    ),
+    'border-width': (
+      property: border-width,
+      class: border,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-block-width': (
+      property: border-width,
+      class: border-y,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-inline-width': (
+      property: border-width,
+      class: border-x,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-width-top': (
+      class: border-top,
+      property: border-top-width,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-width-bottom': (
+      class: border-bottom,
+      property: border-bottom-width,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-width-left': (
+      class: border-start,
+      property: border-left-width,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-width-right': (
+      class: border-end,
+      property: border-right-width,
+      values: if(meta.variable-exists(border-widths), $border-widths, null),
+      important: true,
+      responsive: true,
+    ),
+    'border-styles': (
+      property: border-style,
+      class: border-style,
+      values: solid dashed dotted groove none double inset,
+    ),
+    'border-color-rgba-custom-property-value': (
+      function: 'css-var',
+      css-variable-name: border-clr-rgb,
+      class: border-clr-rgb,
+      values:
+        map-loop(
+          $selected-theme-rgb-colors,
+          rgba-css-var-advanced,
+          '$key',
+          null,
+          $color-prefix
+        ),
+    ),
+    'border-colors-custom-property-value': (
+      function: 'css-var',
+      css-variable-name: border-clr,
+      class: border-clr,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'focus-ring': (
+      function: 'property-advanced',
+      class: focus-ring,
+      state: ':focus',
+      property: (
+        outline: 0,
+        box-shadow: 0 0 0 var(--focus-ring-width, 4px)
+          var(--focus-ring-color, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'focus-ring-focus-visible': (
+      function: 'property-advanced',
+      class: focus-ring-fv,
+      state: ':focus-visible',
+      property: (
+        outline: 0,
+        box-shadow: 0 0 0 var(--focus-ring-width, 4px)
+          var(--focus-ring-color, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'focus-ring-focus-focus-visible': (
+      function: 'property-advanced',
+      class: focus-ring-ffv,
+      state: ':focus' ':focus-visible',
+      property: (
+        outline: 0,
+        box-shadow: 0 0 0 var(--focus-ring-width, 4px)
+          var(--focus-ring-color, var(--#{$prefix}clr-primary)),
+      ),
+    ),
+    'focus-ring-rgba-colors-cp': (
+      function: 'css-var',
+      css-variable-name: focus-ring-color,
+      class: focus-ring-clr-rgb,
+      values:
+        map-loop(
+          $selected-theme-rgb-colors,
+          rgba-css-var-advanced,
+          '$key',
+          'focus-ring',
+          $color-prefix
+        ),
+    ),
+    'focus-ring-hex-colors-cp': (
+      function: 'css-var',
+      css-variable-name: focus-ring-color,
+      class: focus-ring-clr,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'focus-ring-width': (
+      function: 'css-var',
+      css-variable-name: focus-ring-width,
+      class: focus-ring,
+      values: (
+        0: 0,
+        1: 1px,
+        2: 2px,
+        3: 3px,
+        4: 4px,
+        5: 5px,
+        6: 6px,
+        7: 7px,
+        8: 8px,
+        9: 9px,
+        10: 10px,
+      ),
+    ),
+    'width-fixed': (
+      property: width,
+      class: w-f,
+      values: $fixed-values,
+      responsive: true,
+    ),
+    'width-height': (
+      class: wh,
+      property: width height,
+      values: $percentage-values,
+    ),
+    'width': (
+      property: width,
+      class: w,
+      values:
+        map.merge(
+          $percentage-values,
+          (
+            auto: auto,
+            fit-content: fit-content,
+            min-content: min-content,
+            max-content: max-content,
+          )
+        ),
+    ),
+    'max-width': (
+      property: max-width,
+      class: mw,
+      values: $percentage-values,
+    ),
+    'max-width-fixed': (
+      property: max-width,
+      class: max-w-f,
+      values: $fixed-values,
+    ),
+    'viewport-width': (
+      property: width,
+      class: vw,
+      values: $viewport-width-values,
+    ),
+    'min-width': (
+      property: min-width,
+      class: min-w-f,
+      values: $fixed-values,
+    ),
+    'min-viewport-width': (
+      property: min-width,
+      class: min-vw,
+      values: $viewport-width-values,
+    ),
+    'fixed-height': (
+      property: height,
+      class: h-f,
+      values: $fixed-values,
+    ),
+    'height': (
+      property: height,
+      class: h,
+      values:
+        map.merge(
+          $percentage-values,
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'fixed-width-height': (
+      property: height width,
+      class: wh-f,
+      values: $fixed-values,
+    ),
+    'max-height': (
+      property: max-height,
+      class: mh,
+      values: $percentage-values,
+    ),
+    'viewport-height': (
+      property: height,
+      class: vh,
+      values: $viewport-height-values,
+    ),
+    'min-viewport-height': (
+      property: min-height,
+      class: min-vh,
+      values: $viewport-height-values,
+    ),
+    'flex': (
+      responsive: true,
+      property: flex,
+      values: (
+        1: 1,
+        fill: 1 1 auto,
+        none: none,
+      ),
+    ),
+    'flex-direction': (
+      responsive: true,
+      property: flex-direction,
+      class: flex,
+      values: row column row-reverse column-reverse,
+    ),
+    'flex-grow': (
+      responsive: true,
+      property: flex-grow,
+      class: flex,
+      values: (
+        grow-0: 0,
+        grow-1: 1,
+        grow-1-5: 1.5,
+        grow-2: 2,
+      ),
+    ),
+    'flex-shrink': (
+      responsive: true,
+      property: flex-shrink,
+      class: flex,
+      values: (
+        shrink-0: 0,
+        shrink-1: 1,
+        shrink-1-5: 1.5,
+        shrink-2: 2,
+      ),
+    ),
+    'flex-wrap': (
+      responsive: true,
+      property: flex-wrap,
+      class: flex,
+      values: wrap nowrap wrap-reverse,
+    ),
+    'justify-content': (
+      responsive: true,
+      property: justify-content,
+      values: (
+        start: flex-start,
+        end: flex-end,
+        center: center,
+        between: space-between,
+        around: space-around,
+        evenly: space-evenly,
+      ),
+    ),
+    'align-items': (
+      responsive: true,
+      property: align-items,
+      values: (
+        start: flex-start,
+        end: flex-end,
+        center: center,
+        baseline: baseline,
+        stretch: stretch,
+      ),
+    ),
+    'align-content': (
+      responsive: true,
+      property: align-content,
+      values: (
+        start: flex-start,
+        end: flex-end,
+        center: center,
+        between: space-between,
+        around: space-around,
+        stretch: stretch,
+      ),
+    ),
+    'align-self': (
+      responsive: true,
+      property: align-self,
+      values: (
+        auto: auto,
+        start: start,
+        end: end,
+        center: center,
+        baseline: baseline,
+        stretch: stretch,
+      ),
+    ),
+    'justify-self': (
+      class: justify-self,
+      responsive: true,
+      property: justify-self,
+      values: (
+        start: start,
+        end: end,
+        center: center,
+        between: space-between,
+        around: space-around,
+        evenly: space-evenly,
+      ),
+    ),
+    'place-self': (
+      class: place-self,
+      responsive: true,
+      property: place-self,
+      values: (
+        start: start,
+        end: end,
+        center: center,
+        between: space-between,
+        around: space-around,
+        evenly: space-evenly,
+      ),
+    ),
+    'order': (
+      responsive: true,
+      property: order,
+      values: (
+        first: -1,
+        0: 0,
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
+        last: 6,
+      ),
+    ),
+    'font-size': (
+      responsive: true,
+      property: font-size,
+      class: fs,
+      values:
+        map-loop(
+          map.merge($sizes-regular, ($sizes-irregular)),
+          to-rem,
+          '$value'
+        ),
+    ),
+    'font-style': (
+      property: font-style,
+      class: fst,
+      values: italic normal,
+    ),
+    'font-weight': (
+      property: font-weight,
+      class: fw,
+      values: (
+        thin: 100,
+        extra-light: 200,
+        light: 300,
+        regular: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700,
+        extra-bold: 800,
+        'black': 900,
+      ),
+    ),
+    'line-height': (
+      property: line-height,
+      class: lh,
+      values: (
+        70: 0.7,
+        75: 0.75,
+        80: 0.8,
+        85: 0.85,
+        90: 0.9,
+        95: 0.95,
+        100: 1,
+        110: 1.1,
+        120: 1.2,
+        130: 1.3,
+        140: 1.4,
+        base: 1.5,
+        heading: 1.1,
+        sm: 1.25,
+        lg: 2,
+      ),
+    ),
+    'text-align': (
+      responsive: true,
+      property: text-align,
+      class: text,
+      values: (
+        start: left,
+        end: right,
+        center: center,
+      ),
+    ),
+    'text-transform': (
+      property: text-transform,
+      class: text,
+      values: lowercase uppercase capitalize,
+    ),
+    'white-space': (
+      property: white-space,
+      class: text,
+      values: (
+        wrap: normal,
+        nowrap: nowrap,
+      ),
+    ),
+    'word-wrap': (
+      property: word-wrap word-break,
+      class: text,
+      values: (
+        break: break-word,
+      ),
+    ),
+    'alpha': (
+      function: 'css-var',
+      class: alpha,
+      css-variable-name: alpha,
+      values: $decimal-percentage-values,
+    ),
+    'opacity': (
+      property: opacity,
+      values: $decimal-percentage-values,
+    ),
+    'overflow': (
+      property: overflow,
+      values: auto hidden visible scroll clip,
+    ),
+    'overflow-x': (
+      property: overflow-x,
+      values: auto hidden visible scroll clip,
+    ),
+    'overflow-y': (
+      property: overflow-y,
+      values: auto hidden visible scroll clip,
+    ),
+    'gradient': (
+      property: background-image,
+      class: bg,
+      values: (
+        gradient: var(--#{$prefix}gradient),
+      ),
+    ),
+    'text-underline': (
+      property: text-decoration-line,
+      class: text,
+      values: (
+        underline: underline,
+        none: none,
+        underline-dotted: underline dotted,
+        line-through: line-through,
+      ),
+    ),
+    'text-underline-offset': (
+      property: text-underline-offset,
+      class: text,
+      values: (
+        0: 0,
+        1: 1px,
+        2: 2px,
+        3: 3px,
+        4: 4px,
+        5: 5px,
+      ),
+    ),
+    'text-decoration-color': (
+      function: 'custom-property-value',
+      property: text-decoration-color,
+      class: text-underline,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'hover-text-underline': (
+      state: ':hover',
+      property: text-decoration-line,
+      class: hover-text,
+      values: (
+        underline: underline,
+        underline-dotted: underline dotted,
+        line-through: line-through,
+      ),
+    ),
+    'user-select': (
+      property: user-select,
+      values: all auto none,
+    ),
+    'pointer-events': (
+      property: pointer-events,
+      class: pe,
+      values: none auto,
+    ),
+    'visibility': (
+      property: visibility,
+      class: visibility,
+      values: visible hidden,
+    ),
+    'reset-spacing': (
+      function: 'nested-rules',
+      class: reset-spacing,
+      property: (
+        '*': (
+          padding: 0,
+          margin: 0,
+        ),
+      ),
+    ),
+    'list-none': (
+      property: list-style,
+      class: list,
+      values: none,
+    ),
+    'list-reset-a': (
+      function: 'nested-rules',
+      class: list-reset-deep-a,
+      property: (
+        list-style: none,
+        padding-left: 0,
+        a: (
+          text-decoration: none,
+        ),
+      ),
+    ),
+    'list-none-deep': (
+      function: 'nested-rules',
+      class: list-none-deep,
+      property: (
+        list-style: none,
+        a: (
+          text-decoration: none,
+        ),
+      ),
+    ),
+    '.list-reset-deep': (
+      function: 'nested-rules',
+      class: list-reset-deep,
+      property: (
+        'ul,ol': (
+          list-style: none,
+          padding-left: 0,
+          margin-block: 0,
+        ),
+        a: (
+          text-decoration: none,
+        ),
+      ),
+    ),
+    'simple-and-resposive-custom-properties': (
+      function: 'simple-custom-property',
+      values: $simple-custom-properties-merged,
+    ),
+    'font-family': (
+      function: 'custom-property-value',
+      property: font-family,
+      class: ff,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(font-families),
+          map.get($font-families, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(font-families),
+          map.get($font-families, values),
+          null
+        ),
+    ),
+    'box-shadow-custom': (
+      function: 'custom-property-value',
+      property: box-shadow,
+      class: box-shadow,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(box-shadows),
+          map.get($box-shadows, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(box-shadows),
+          map.get($box-shadows, values),
+          null
+        ),
+    ),
+    'box-shadow': (
+      property: box-shadow,
+      class: box-shadow,
+      values: (
+        none: none,
+      ),
+    ),
+    'focus-ring-main': (
+      function: 'custom-property-value',
+      state: ':focus',
+      required-property: (
+        outline: 0,
+      ),
+      property: box-shadow,
+      class: focus-ring,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(focus-rings),
+          map.get($focus-rings, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(focus-rings),
+          map.get($focus-rings, values),
+          null
+        ),
+    ),
+    'transition-custom': (
+      function: 'custom-property-value',
+      property: transition,
+      class: transition,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(transitions),
+          map.get($transitions, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(transitions),
+          map.get($transitions, values),
+          null
+        ),
+    ),
+    'transition': (
+      property: transition,
+      class: transition,
+      values: (
+        none: none,
+        all: all 0.3s,
+        background: background 0.3s,
+        opacity: opacity 0.3s,
+        shadow: box-shadow 0.3s,
+        height: height 0.3s,
+      ),
+    ),
+    'transition-duration': (
+      property: transition-duration,
+      class: duration,
+      values: (
+        100: 100ms,
+        200: 200ms,
+        300: 300ms,
+        400: 400ms,
+        500: 500ms,
+        600: 600ms,
+        700: 700ms,
+        800: 800ms,
+        900: 900ms,
+        1000: 1000ms,
+        2000: 2000ms,
+        3000: 3000ms,
+      ),
+    ),
+    'transition-timing': (
+      property: transition-timing-function,
+      class: timing,
+      values: linear ease-in ease-out ease-in-out,
+    ),
+    'z-index': (
+      function: 'custom-property-value',
+      property: z-index,
+      class: z,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(z-indeces),
+          map.get($z-indeces, custom-property-prefix),
+          null
+        ),
+      values:
+        if(meta.variable-exists(z-indeces), map.get($z-indeces, values), null),
+    ),
+    'border-radius-merged': (
+      property: border-radius,
+      class: radius,
+      values:
+        map.merge(
+          $fixed-values,
+          (
+            circle: 50%,
+            round: 100%,
+          )
+        ),
+    ),
+    'border-radius': (
+      function: 'custom-property-value',
+      property: border-radius,
+      class: radius,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-radius-start': (
+      function: 'custom-property-value',
+      property: border-bottom-left-radius border-top-left-radius,
+      class: radius-start,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-radius-end': (
+      function: 'custom-property-value',
+      property: border-bottom-left-radius border-top-right-radius,
+      class: radius-end,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-radius-top': (
+      function: 'custom-property-value',
+      property: border-top-left-radius border-top-right-radius,
+      class: radius-top,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-bottom-radius': (
+      function: 'custom-property-value',
+      property: border-bottom-left-radius border-bottom-right-radius,
+      class: radius-bottom,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-top-left-radius': (
+      function: 'custom-property-value',
+      property: border-top-left-radius,
+      class: radius-top-start,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-top-right-radius': (
+      function: 'custom-property-value',
+      property: border-top-right-radius,
+      class: radius-top-end,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-bottom-left-radius': (
+      function: 'custom-property-value',
+      property: border-bottom-left-radius,
+      class: radius-bottom-start,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'border-bottom-right-radius': (
+      function: 'custom-property-value',
+      property: border-bottom-right-radius,
+      class: radius-bottom-end,
+      custom-property-prefix:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, custom-property-prefix),
+          null
+        ),
+      values:
+        if(
+          meta.variable-exists(border-radius),
+          map.get($border-radius, values),
+          null
+        ),
+    ),
+    'flex-center': (
+      function: 'property-advanced',
+      class: flex-center,
+      property: (
+        display: flex,
+        justify-content: center,
+        align-items: center,
+      ),
+    ),
+    'default-button-style': (
+      function: 'property-advanced',
+      class: btn-style-reset,
+      property: (
+        background-color: transparent,
+        cursor: pointer,
+        border: none,
+      ),
+    ),
+    'clear-float': (
+      function: 'property-advanced',
+      class: clear-float,
+      state: '::after',
+      property: (
+        content: '',
+        display: block,
+        clear: both,
+      ),
+    ),
+    'sr-only-focusable': (
+      function: 'property-advanced',
+      class: sr-only-focusable,
+      state: ':active' ':focus',
+      property: (
+        clip: auto,
+        -webkit-clip-path: none,
+        clip-path: none,
+        height: auto,
+        margin: auto,
+        overflow: visible,
+        width: auto,
+        white-space: normal,
+      ),
+    ),
+    'sr-only': (
+      function: 'property-advanced',
+      class: sr-only,
+      property: (
+        border: 0,
+        clip: rect(1px, 1px, 1px, 1px),
+        -webkit-clip-path: inset(50%),
+        clip-path: inset(50%),
+        height: 1px,
+        margin: -1px,
+        overflow: hidden,
+        padding: 0,
+        position: absolute,
+        width: 1px,
+        white-space: nowrap,
+      ),
+    ),
+    'sticky-top': (
+      function: 'property-advanced',
+      class: sticky-top,
+      property: (
+        position: sticky,
+        top: 0,
+        z-index: var(--#{$prefix}z-1),
+      ),
+    ),
+    'sticky-bottom': (
+      function: 'property-advanced',
+      class: sticky-bottom,
+      property: (
+        position: sticky,
+        bottom: 0,
+        z-index: var(--#{$prefix}z-1),
+      ),
+    ),
+    'fixed-top': (
+      function: 'property-advanced',
+      class: fixed-top,
+      property: (
+        position: fixed,
+        top: 0,
+        right: 0,
+        left: 0,
+        z-index: var(--#{$prefix}z-1),
+      ),
+    ),
+    'fixed-bottom': (
+      function: 'property-advanced',
+      class: fixed-bottom,
+      property: (
+        position: fixed,
+        bottom: 0,
+        right: 0,
+        left: 0,
+        z-index: var(--#{$prefix}z-1, 999),
+      ),
+    ),
+    'position': (
+      property: position,
+      class: position,
+      values: static relative absolute fixed sticky,
+    ),
+    'top': (
+      property: top,
+      class: top,
+      values: $percentage-values,
+    ),
+    'to-fix': (
+      property: top,
+      class: top-f,
+      values: $fixed-values,
+    ),
+    'top-right': (
+      property: top right,
+      class: top-right,
+      values: $percentage-values,
+    ),
+    'top-right-fixed': (
+      property: top right,
+      class: top-right-f,
+      values: $fixed-values,
+    ),
+    'top-left': (
+      property: top left,
+      class: top-left,
+      values: $percentage-values,
+    ),
+    'top-left-fixed': (
+      property: top left,
+      class: top-left-f,
+      values: $fixed-values,
+    ),
+    'bottom': (
+      property: bottom,
+      class: bottom,
+      values: $percentage-values,
+    ),
+    'bottom-fixed': (
+      property: bottom-f,
+      class: bottom-f,
+      values: $fixed-values,
+    ),
+    'bottom-right': (
+      property: bottom right,
+      class: bottom-right,
+      values: $percentage-values,
+    ),
+    'bottom-right-fixed': (
+      property: bottom right,
+      class: bottom-right-f,
+      values: $fixed-values,
+    ),
+    'bottom-left': (
+      property: bottom left,
+      class: bottom-left,
+      values: $percentage-values,
+    ),
+    'bottom-left-fixed': (
+      property: bottom left,
+      class: bottom-left-f,
+      values: $fixed-values,
+    ),
+    'start': (
+      property: left,
+      class: start,
+      values: $percentage-values,
+    ),
+    'start-fixed': (
+      property: left,
+      class: start-f,
+      values: $fixed-values,
+    ),
+    'end': (
+      property: right,
+      class: end,
+      values: $percentage-values,
+    ),
+    'end-fixed': (
+      property: right,
+      class: end,
+      values: $fixed-values,
+    ),
+    'position-bot': (
+      property: bottom,
+      class: bot,
+      values: $percentage-values,
+    ),
+    'position-top': (
+      property: top,
+      class: top,
+      values: $percentage-values,
+    ),
+    'position-start': (
+      property: left,
+      class: start,
+      values: $percentage-values,
+    ),
+    'position-end': (
+      property: right,
+      class: end,
+      values: $percentage-values,
+    ),
+    'position-bot-fluid': (
+      function: 'fluid',
+      property: bottom,
+      class: bot,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-bot-left-fluid': (
+      function: 'fluid',
+      property: bottom left,
+      class: bot-start,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-bot-right-fluid': (
+      function: 'fluid',
+      property: bottom right,
+      class: bot-end,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-top-fluid': (
+      function: 'fluid',
+      property: top,
+      class: top,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-top-left-fluid': (
+      function: 'fluid',
+      property: top left,
+      class: top-start,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-top-right-fluid': (
+      function: 'fluid',
+      property: top right,
+      class: top-end,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-start-fluid': (
+      function: 'fluid',
+      property: left,
+      class: start,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'position-end-fluid': (
+      function: 'fluid',
+      property: right,
+      class: end,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'hover-opacity': (
+      state: ':hover',
+      property: opacity,
+      class: hover-opacity,
+      values: $decimal-percentage-values,
+    ),
+    'hover-scale': (
+      state: ':hover',
+      property: scale,
+      class: hover-scale,
+      values:
+        map.merge(
+          (
+            none: var(--scale-value),
+          ),
+          $decimal-percentage-values
+        ),
+    ),
+    'fill': (
+      function: 'custom-property-value',
+      property: fill,
+      class: fill,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'background-colors-rgba-hover': (
+      state: ':hover',
+      property: background-color,
+      class: hover-bga,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          $enable-rgb-colors,
+          map-loop(
+            $selected-theme-rgb-colors,
+            rgba-css-var-advanced,
+            '$key',
+            null,
+            $hover-prefix
+          ),
+          null
+        ),
+    ),
+    'background-colors-hex-custom-property-hover': (
+      state: ':hover',
+      function: 'custom-property-value',
+      property: background-color,
+      class: hover-bg,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'hover-background-colors-hex': (
+      property: background-color,
+      class: hover-bg,
+      state: ':hover',
+      values:
+        if(
+          map.has-key($color-theme, $selected-theme, hover),
+          map.get($color-theme, $selected-theme, hover),
+          null
+        ),
+    ),
+    'background-colors-alpha': (
+      property: background-color,
+      class: bga,
+      values:
+        if(
+          enable-rgb-colors,
+          map-loop(
+            $selected-theme-rgb-colors,
+            rgba-css-var-advanced,
+            '$key',
+            null,
+            $color-prefix
+          ),
+          null
+        ),
+    ),
+    'background-colors-hex-custom-property': (
+      function: 'custom-property-value',
+      property: background-color,
+      class: bg,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'background-colors-hex': (
+      property: background-color,
+      class: bg-h,
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'background-transparent': (
+      property: background-color,
+      class: bg,
+      values: transparent,
+    ),
+    'text-transparent': (
+      property: color,
+      class: text,
+      values: (
+        transparent: transparent,
+      ),
+    ),
+    'text-color-alpha': (
+      property: color,
+      class: texta,
+      // custom-property-prefix: if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          $enable-rgb-colors,
+          map-loop(
+            $selected-theme-rgb-colors,
+            rgba-css-var-advanced,
+            '$key',
+            null,
+            $color-prefix
+          ),
+          null
+        ),
+    ),
+    'text-color-hex-custom-properties': (
+      function: 'custom-property-value',
+      property: color,
+      class: text,
+      custom-property-prefix:
+        if(meta.variable-exists(color-prefix), $color-prefix, null),
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'text-color-hex': (
+      property: color,
+      class: text-hex,
+      values:
+        if(
+          meta.variable-exists(selected-theme-hex-colors),
+          $selected-theme-hex-colors,
+          null
+        ),
+    ),
+    'text-color-hex-hover': (
+      property: color,
+      state: ':hover',
+      class: text-hover#{'-' + remove-substring($color-prefix, '-')},
+      values:
+        if(
+          map.has-key($color-theme, $selected-theme, hover),
+          map.get($color-theme, $selected-theme, hover),
+          null
+        ),
+    ),
+    'text-color-rgba-hover': (
+      property: color,
+      class: text-hover,
+      state: ':hover',
+      values:
+        if(
+          map.has-key($color-theme, $selected-theme, hover),
+          map-loop(
+            map.get($color-theme, $selected-theme, hover),
+            rgba-css-var-advanced,
+            '$key',
+            null,
+            $hover-prefix
+          ),
+          null
+        ),
+    ),
+    'font-size-fluid': (
+      function: 'fluid',
+      class: fs,
+      property: font-size,
+      values: if(meta.variable-exists(size-clamp), $size-clamp, null),
+      responsive: true,
+    ),
+    'margin-fluid': (
+      function: 'fluid',
+      class: m,
+      property: margin,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-top-fluid': (
+      function: 'fluid',
+      class: mt,
+      property: margin-top,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-bottom-fluid': (
+      function: 'fluid',
+      class: mb,
+      property: margin-bottom,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-left-fluid': (
+      function: 'fluid',
+      class: ms,
+      property: margin-left,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-right-fluid': (
+      function: 'fluid',
+      class: me,
+      property: margin-right,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-block-fluid': (
+      function: 'fluid',
+      class: my,
+      property: margin-block,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'margin-inline-fluid': (
+      function: 'fluid',
+      class: mx,
+      property: margin-inline,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-fluid': (
+      function: 'fluid',
+      class: p,
+      property: padding,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-top-fluid': (
+      function: 'fluid',
+      class: pt,
+      property: padding-top,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-bottom-fluid': (
+      function: 'fluid',
+      class: pb,
+      property: padding-bottom,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-left-fluid': (
+      function: 'fluid',
+      class: ps,
+      property: padding-left,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-right-fluid': (
+      function: 'fluid',
+      class: pe,
+      property: padding-right,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-block-fluid': (
+      function: 'fluid',
+      class: py,
+      property: padding-block,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'padding-inline-fluid': (
+      function: 'fluid',
+      class: px,
+      property: padding-inline,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+      responsive: true,
+    ),
+    'gap-fluid': (
+      function: 'fluid',
+      responsive: true,
+      property: gap,
+      class: gap,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'row-gap-fluid': (
+      function: 'fluid',
+      responsive: true,
+      property: row-gap,
+      class: row-gap,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'column-gap-fluid': (
+      function: 'fluid',
+      responsive: true,
+      property: column-gap,
+      class: column-gap,
+      values: if(meta.variable-exists(spacing-clamp), $spacing-clamp, null),
+    ),
+    'gap': (
+      responsive: true,
+      property: gap,
+      class: gap,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'row-gap': (
+      responsive: true,
+      property: row-gap,
+      class: row-gap,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'column-gap': (
+      responsive: true,
+      property: column-gap,
+      class: column-gap,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'margin': (
+      responsive: true,
+      property: margin,
+      class: m,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-x': (
+      responsive: true,
+      property: margin-right margin-left,
+      class: mx,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-y': (
+      responsive: true,
+      property: margin-top margin-bottom,
+      class: my,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-top': (
+      responsive: true,
+      property: margin-top,
+      class: mt,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-end': (
+      responsive: true,
+      property: margin-right,
+      class: me,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-bottom': (
+      responsive: true,
+      property: margin-bottom,
+      class: mb,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'margin-start': (
+      responsive: true,
+      property: margin-left,
+      class: ms,
+      values:
+        map.merge(
+          map.merge($sizes-regular, $sizes-irregular),
+          (
+            auto: auto,
+          )
+        ),
+    ),
+    'negative-margin': (
+      responsive: true,
+      property: margin,
+      class: m,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-x': (
+      responsive: true,
+      property: margin-right margin-left,
+      class: mx,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-y': (
+      responsive: true,
+      property: margin-top margin-bottom,
+      class: my,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-top': (
+      responsive: true,
+      property: margin-top,
+      class: mt,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-end': (
+      responsive: true,
+      property: margin-right,
+      class: me,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-bottom': (
+      responsive: true,
+      property: margin-bottom,
+      class: mb,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'negative-margin-start': (
+      responsive: true,
+      property: margin-left,
+      class: ms,
+      values: map.merge($negative-spacers, $negative-spacers-irregular),
+    ),
+    'padding': (
+      responsive: true,
+      property: padding,
+      class: p,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'padding-x-container': (
+      responsive: true,
+      property: padding-right padding-left,
+      class: px,
+      values: (
+        container: var(--container-padding),
+      ),
+    ),
+    'padding-x': (
+      responsive: true,
+      property: padding-right padding-left,
+      class: px,
+      values:
+        map.merge(
+          $sizes-regular,
+          map.merge(
+            $sizes-irregular,
+            (
+              container-gutter:
+                calc(
+                  (100vw - var(--container, 100vw)) / 2 +
+                    var(--container-padding)
+                ),
+            )
+          )
+        ),
+    ),
+    'padding-y': (
+      responsive: true,
+      property: padding-top padding-bottom,
+      class: py,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'padding-top': (
+      responsive: true,
+      property: padding-top,
+      class: pt,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'padding-end': (
+      responsive: true,
+      property: padding-right,
+      class: pe,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'padding-bottom': (
+      responsive: true,
+      property: padding-bottom,
+      class: pb,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+    'padding-start': (
+      responsive: true,
+      property: padding-left,
+      class: ps,
+      values: map.merge($sizes-regular, $sizes-irregular),
+    ),
+  ),
+  $utilities
+);

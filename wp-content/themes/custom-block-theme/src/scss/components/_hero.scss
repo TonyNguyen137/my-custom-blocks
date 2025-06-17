@@ -1,0 +1,6 @@
+@use "../abstracts" as *;
+
+.hero {
+  outline: 1px dashed black;
+  min-height: fluid(400, 800, sm, xxl, px);
+}
