@@ -65,6 +65,13 @@ export default function Edit({ attributes, setAttributes }) {
 		});
 	}
 
+	function handleDelete() {
+		setAttributes({
+			imgID: null,
+			imgUrl: null,
+		});
+	}
+
 	return (
 		<>
 			<InspectorControls>
@@ -90,6 +97,9 @@ export default function Edit({ attributes, setAttributes }) {
 										>
 											Choose Image
 										</Button>
+										{attributes.imgID && (
+											<button onClick={handleDelete}>X</button>
+										)}
 									</div>
 								);
 							}}
