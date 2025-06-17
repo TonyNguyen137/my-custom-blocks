@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "custom-block/hero",
+	"version": "0.1.0",
+	"title": "Hero",
+	"category": "widgets",
+	"icon": "hero",
+	"description": "a hero block",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "full"
+		},
+		"imgID": {
+			"type": "number"
+		},
+		"imgURL": {
+			"type": "string"
+		}
+	},
+	"textdomain": "my-custom-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScript": "file:./view.js"
+}

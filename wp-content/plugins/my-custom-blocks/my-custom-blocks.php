@@ -54,7 +54,7 @@ function custom_block_my_custom_blocks_block_init() {
 	$manifest_data = require __DIR__ . '/build/blocks-manifest.php';
 	
 	foreach ( array_keys( $manifest_data ) as $block_type ) {
-		var_dump( __DIR__ . "/build/blocks/{$block_type}" );
+
 		register_block_type( __DIR__ . "/build/{$block_type}" );
 	}
 }

@@ -32,8 +32,10 @@ import "./editor.scss";
 
 export default function Edit() {
 	return (
-		<div {...useBlockProps({ className: "container" })}>
-			<InnerBlocks />
-		</div>
+		<>
+			<div {...useBlockProps({ className: "container" })}>
+				<InnerBlocks />
+			</div>
+		</>
 	);
 }
